@@ -27,7 +27,10 @@ public class CsvRow2Col {
             FileWriter fileWriter = new FileWriter(s);
 
             HashMap<String, String[]> result = new HashMap<String, String[]>();
+            //[0,1[a,b,c],2]
+            //size 3
             String[] strings1 = objects.get(0);
+            //length 5 = 3-1+3
             int length = strings1.length - 1 + header.size();
 
             StringBuilder h = new StringBuilder();
@@ -37,7 +40,8 @@ public class CsvRow2Col {
                     h.append("c" + i).append(",");
 
                 } else {
-                    if (i >= row2col && i < row2col + length - 2) {
+                    // i >= 1  and i < 1+ 5 - 3 + 1= 4
+                    if (i >= row2col && i < row2col + length - strings1.length + 1) {
                         Set<Map.Entry<String, Integer>> entries = header.entrySet();
                         for (Map.Entry<String, Integer> entry : entries) {
                             if (entry.getValue() == i - row2col) {
@@ -63,14 +67,16 @@ public class CsvRow2Col {
                             result.put(object[0], objs);
                             objs[i] = object[0];
 
-
                         }
                     } else {
                         String[] objs = result.get(object[0]);
-                        if (i >= row2col && i < row2col + length - 2) {
-                            objs[header.get(object[row2col])] = "1";
+                        if (i >= row2col && i < row2col + length - strings1.length + 1) {
+                            // i=3 2 + 1
+                            objs[row2col + header.get(object[row2col])] = "1";
                         } else {
-                            objs[i] = object[i - length + 3];
+                            // i=4   4- 5 + 3 = 2
+
+                            objs[i] = object[i - length + strings1.length];
                         }
                     }
                 }
@@ -79,8 +85,12 @@ public class CsvRow2Col {
 
             for (Map.Entry<String, String[]> entry : result.entrySet()) {
                 String[] value = entry.getValue();
+
                 StringBuilder stringBuilder = new StringBuilder();
                 for (String s1 : value) {
+                    if (s1 == null) {
+                        s1 = "";
+                    }
                     stringBuilder.append(s1).append(",");
                 }
                 stringBuilder.setCharAt(stringBuilder.length() - 1, '\n');
